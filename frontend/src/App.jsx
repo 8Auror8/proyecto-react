@@ -1,33 +1,51 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Link, Navigate, Route, Routes } from "react-router-dom"
+import Books from "./pages/books/Books"
+import Login from "./pages/login/Login"
+import Signup from "./pages/signup/Signup"
+import Home from "./pages/home/Home"
+import { useContext } from "react"
+import { SessionContext } from "./contexts/SessionContext"
+
+import 'bootstrap/dist/css/bootstrap.css'
+import { Button } from "bootstrap"
 
 function App() {
-  const [count, setCount] = useState(0)
+
+  const {logout, user} = useContext(SessionContext)
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <header>
+        <nav>
+          <ul>
+            <li>
+              <Link to="/">Home</Link>
+            </li>
+            {user?            <li>
+              <Link to="/libros">Libros</Link>
+            </li> : ""}
+
+            {user?"":             <li>
+              <Link to="/cuenta">Cuenta</Link>
+            </li>}
+
+            {user?"":            <li>
+              <Link to="/registro">Registro</Link>
+            </li>}
+
+            {user?<button onClick={logout} className="btn btn-outline-danger">Cierra Sesión</button>:""}
+
+          </ul>
+        </nav>
+      </header>
+      <main>
+        <Routes>
+          <Route path="/" element={<Home></Home>}></Route>
+          <Route path="/libros" element={<Books></Books>}></Route>
+          <Route path="/cuenta" element={user ? <Navigate to="/libros"></Navigate> : <Login></Login>}></Route>
+          <Route path="/registro" element={<Signup></Signup>}></Route>
+        </Routes>
+      </main>
     </>
   )
 }
